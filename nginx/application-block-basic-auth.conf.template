@@ -1,0 +1,74 @@
+set $do_not_cache 0;
+set $bypass 0;
+set $need_forbidden 0;
+
+# security for bypass so localhost can empty cache
+if ($remote_addr ~ "^(127.0.0.1)$") {
+  set $bypass $http_secret_header;
+}
+
+if ($request_uri ~* "/wp-admin/|/wp-login.php|/xmlrpc.php|/wp-.*.php|/index.php|/feed/") {
+  set $need_forbidden 1;
+}
+
+if ($request_method !~ ^(GET|HEAD|POST)$ ) {
+  set $need_forbidden 1;
+}
+
+if ($http_authorization = "Basic {HT_PASSWD_BASE64}") {
+  # set $auth_valid 1;
+  set $need_forbidden 0;
+  set $bypass 1;
+  set $do_not_cache 1;
+}
+
+if ($need_forbidden = 1) {
+  return 302 /auth-restrict;
+}
+
+location /auth-restrict {
+  auth_basic "Restricted";
+  auth_basic_user_file /opt/bitnami/.htpasswd;
+  add_header Content-Type "text/xml; charset=utf-8";
+  proxy_pass http://127.0.0.1:8888;
+  proxy_set_header Host $http_host;
+  proxy_set_header X-Forwarded-Host $http_host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+}
+
+location ~* /(?:uploads|files)/.*\.php$ {
+  deny all;
+}
+location ~* ^/(?:wp-content|wp-includes)/.*\.php$ {
+  deny all;
+}
+location ~* ^/wp-content/uploads/.*\.(?:s?html?|php|swf)$ {
+  deny all;
+}
+location ~* ^/(?:xmlrpc\.php|wp-links-opml\.php|wp-config\.php|wp-config-sample\.php|wp-comments-post\.php|readme\.html|license\.txt)$ {
+  deny all;
+}
+
+fastcgi_cache wordpress;
+fastcgi_cache_bypass $bypass;
+fastcgi_no_cache $do_not_cache;
+fastcgi_cache_valid 200 302 30s;
+fastcgi_cache_valid 301 10s;
+fastcgi_cache_valid any 10s;
+
+# rate limiter
+limit_req zone=ip burst=120;
+limit_req zone=page burst=4;
+limit_req zone=static burst=4;
+limit_req zone=api burst=40;
+limit_req_status 429;
+
+add_header X-Cache-Status $upstream_cache_status;
+# add_header X-Debug-Auth-Valid $auth_valid;
+# add_header X-Cache-Key $scheme$request_method$host$request_uri_path;
+# add_header X-Zone-Ip $client_ip;
+# add_header X-Zone-Page $zone_page;
+# add_header X-Zone-Static $zone_static;
+# add_header X-Zone-Api $zone_api;

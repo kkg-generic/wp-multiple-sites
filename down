@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source $(pwd)/compose
+
+docker-compose down

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo "...load configuration"
+source $(pwd)/config
+
+echo "...create shared network"
+docker network create --attachable shared || true
+
+echo "...create volume"
+for i in "${!SITE_NAMES[@]}"
+do
+  SITE_NAME=${SITE_NAMES[$i]}
+  docker volume create ${SITE_NAME}_wordpress || true
+  docker volume create ${SITE_NAME}_mariadb || true
+done
+
+source $(pwd)/htpasswd
+source $(pwd)/compose
+source $(pwd)/proxy
+
+echo "...compose up"
+docker compose up -d --force-recreate

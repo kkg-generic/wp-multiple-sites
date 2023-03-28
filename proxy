@@ -1,0 +1,69 @@
+#!/bin/bash
+
+source $(pwd)/config
+
+echo "...prepare proxy.conf"
+proxy_conf_header="events {
+  worker_connections 1024;
+}
+
+http {
+  proxy_buffering off;
+  # proxy_buffers 256 32k;
+  # proxy_buffer_size 64k;
+  proxy_connect_timeout 300s;
+  proxy_send_timeout 300s;
+  proxy_read_timeout 300s;
+  send_timeout 300s;
+  client_max_body_size 1G;"
+
+proxy_conf_sites=""
+
+for i in "${!SITE_NAMES[@]}"
+do
+  SITE_NAME=${SITE_NAMES[$i]}
+  DOMAIN_NAME=${DOMAIN_NAMES[$i]}
+  CERT_CRT="${SITE_NAME}.crt"
+  CERT_KEY="${SITE_NAME}.key"
+  current_site="
+  server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
+    server_tokens off;
+
+    ssl_certificate /etc/nginx/certs/${CERT_CRT};
+    ssl_certificate_key /etc/nginx/certs/${CERT_KEY};
+
+    location / {
+      access_log off;
+      log_not_found off;
+      proxy_pass http://${SITE_NAME}_wordpress:8080;
+      proxy_set_header Host \$http_host;
+      proxy_set_header X-Forwarded-Host \$http_host;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+  }
+  # server {
+  #   listen 443 ssl http2;
+  #   listen [::]:443 ssl http2;
+  #   server_name ${DOMAIN_NAME};
+  #   server_tokens off;
+
+  #   ssl_certificate /etc/nginx/certs/${CERT_CRT};
+  #   ssl_certificate_key /etc/nginx/certs/${CERT_KEY};
+  #   location / {
+  #     return 301 \$scheme://www.${DOMAIN_NAME}\$request_uri;
+  #   }
+  # }"
+  proxy_conf_sites="${proxy_conf_sites}${current_site}"
+done
+
+proxy_conf_footer="
+}"
+
+proxy_conf="${proxy_conf_header}${proxy_conf_sites}${proxy_conf_footer}"
+
+echo "$proxy_conf" > $(pwd)/nginx/proxy.conf

@@ -1,0 +1,96 @@
+#!/bin/bash
+
+source $(pwd)/config
+
+echo "...generate docker-compose.yml"
+compose_header="version: '2'
+"
+
+compose_services="services:
+"
+
+compose_proxy_service="  proxy:
+    container_name: proxy_server
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    networks:
+      - shared
+    depends_on:
+"
+
+compose_volumes="volumes:
+"
+compose_networks="networks:
+  shared:
+    name: shared
+    external: true
+"
+
+for i in "${!SITE_NAMES[@]}"
+do
+  SITE_NAME=${SITE_NAMES[$i]}
+  compose_services="${compose_services}  ${SITE_NAME}_mariadb:
+    restart: always
+    container_name: ${SITE_NAME}_mariadb
+    image: docker.io/bitnami/mariadb:10.6
+    volumes:
+      - ${SITE_NAME}_mariadb:/bitnami/mariadb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_wordpress
+      - MARIADB_PASSWORD=1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
+      - MARIADB_DATABASE=bitnami_wordpress
+    networks:
+      ${SITE_NAME}_internal:
+        aliases:
+          - mariadb
+  ${SITE_NAME}_wordpress:
+    container_name: ${SITE_NAME}_wordpress
+    restart: always
+    image: wordpress-nginx:latest
+    build: .
+    volumes:
+      - ${SITE_NAME}_wordpress:/bitnami/wordpress
+      - ./nginx/server-block.conf:/opt/bitnami/nginx/conf/server_blocks/_server-block.conf
+      # - ./nginx/application-block-normal.conf:/opt/bitnami/nginx/conf/bitnami/_app.conf
+      - ./nginx/application-block-basic-auth.conf:/opt/bitnami/nginx/conf/bitnami/_app.conf
+      - .htpasswd:/opt/bitnami/.htpasswd
+    depends_on:
+      - ${SITE_NAME}_mariadb
+    environment:
+      PHP_MEMORY_LIMIT: 512m
+      PHP_MAX_EXECUTION_TIME: 3600
+      PHP_POST_MAX_SIZE: 1G
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      # WORDPRESS_DATABASE_HOST: ${SITE_NAME}_mariadb
+      # WORDPRESS_DATABASE_PORT_NUMBER: 3306
+      WORDPRESS_DATABASE_USER: bn_wordpress
+      WORDPRESS_DATABASE_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
+      WORDPRESS_DATABASE_NAME: bitnami_wordpress
+    networks:
+      - shared
+      - ${SITE_NAME}_internal
+"
+  compose_volumes="${compose_volumes}  ${SITE_NAME}_mariadb:
+    name: ${SITE_NAME}_mariadb
+    external: true
+  ${SITE_NAME}_wordpress:
+    name: ${SITE_NAME}_wordpress
+    external: true
+"
+
+  compose_networks="${compose_networks}  ${SITE_NAME}_internal:
+"
+
+  compose_proxy_service="${compose_proxy_service}      - ${SITE_NAME}_wordpress
+"
+done
+
+docker_compose="${compose_header}${compose_services}${compose_proxy_service}${compose_volumes}${compose_networks}"
+
+echo "$docker_compose" > docker-compose.yml
