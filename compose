@@ -34,6 +34,9 @@ compose_networks="networks:
 for i in "${!SITE_NAMES[@]}"
 do
   SITE_NAME=${SITE_NAMES[$i]}
+  FTP_PORT=${FTP_PORT[$i]}
+  MIX_PORT=$(echo "$FTP_PORT + 1000 + $i * 10" | bc)
+  MAX_PORT=$(echo "$FTP_PORT + 1000 + 10 + $i * 10" | bc)
   compose_services="${compose_services}  ${SITE_NAME}_mariadb:
     restart: always
     container_name: ${SITE_NAME}_mariadb
@@ -72,6 +75,19 @@ do
       WORDPRESS_DATABASE_USER: bn_wordpress
       WORDPRESS_DATABASE_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
       WORDPRESS_DATABASE_NAME: bitnami_wordpress
+  ${SITE_NAME}_ftp:
+    container_name: ${SITE_NAME}_ftp
+    restart: always
+    image: delfer/alpine-ftp-server:latest
+    volumes:
+      - ${SITE_NAME}_wordpress:/bitnami/wordpress
+    environment:
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress\"
+      MIN_PORT: $MIX_PORT
+      MAX_PORT: $MAX_PORT
+    ports:
+      - ${FTP_PORT}:21
+      - ${MIX_PORT}-${MAX_PORT}:${MIX_PORT}-${MAX_PORT}
     networks:
       - shared
       - ${SITE_NAME}_internal

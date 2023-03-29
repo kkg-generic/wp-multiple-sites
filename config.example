@@ -4,5 +4,6 @@
 
 SITE_NAMES=(site1 site2)
 DOMAIN_NAMES=(site1.com site2.com)
+FTP_PORT=(21 22)
 HT_PASSWD_USER="admin"
 HT_PASSWD_PASSWORD="P@ssw0rd"
