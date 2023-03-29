@@ -75,6 +75,9 @@ do
       WORDPRESS_DATABASE_USER: bn_wordpress
       WORDPRESS_DATABASE_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
       WORDPRESS_DATABASE_NAME: bitnami_wordpress
+    networks:
+      - shared
+      - ${SITE_NAME}_internal
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
     restart: always
@@ -88,9 +91,6 @@ do
     ports:
       - ${FTP_PORT}:21
       - ${MIX_PORT}-${MAX_PORT}:${MIX_PORT}-${MAX_PORT}
-    networks:
-      - shared
-      - ${SITE_NAME}_internal
 "
   compose_volumes="${compose_volumes}  ${SITE_NAME}_mariadb:
     name: ${SITE_NAME}_mariadb
