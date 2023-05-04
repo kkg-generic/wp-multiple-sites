@@ -85,7 +85,7 @@ do
     volumes:
       - ${SITE_NAME}_wordpress:/bitnami/wordpress/wp-content
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     ports:
