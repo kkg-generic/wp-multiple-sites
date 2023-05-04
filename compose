@@ -83,7 +83,7 @@ do
     restart: always
     image: delfer/alpine-ftp-server:latest
     volumes:
-      - ${SITE_NAME}_wordpress:/bitnami/wordpress
+      - ${SITE_NAME}_wordpress:/bitnami/wordpress/wp-content
     environment:
       USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress\"
       MIN_PORT: $MIX_PORT
