@@ -31,8 +31,25 @@ compose_networks="networks:
     external: true
 "
 
-for i in "${!SITE_NAMES[@]}"
-do
+compose_phpmyadmin_service_start="  phpmyadmin:
+    restart: always
+    image: phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOSTS: "
+
+compose_phpmyadmin_service_end1="
+      # PMA_ARBITRARY: 1
+      # PMA_PORT: 3306
+      # PMA_USER: bn_wordpress
+      # PMA_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
+      # PMA_CONTROLUSER: ${PHPMYADMIN_USER}
+      # PMA_CONTROLUSER_PASSWORD: ${PHPMYADMIN_PASSWORD}
+      # APACHE_PORT: ${PHPMYADMIN_PORT}
+    depends_on:
+"
+
+for i in "${!SITE_NAMES[@]}"; do
   SITE_NAME=${SITE_NAMES[$i]}
   FTP_PORT=${FTP_PORT[$i]}
   MIX_PORT=$(echo "$FTP_PORT + 1000 + $i * 10" | bc)
@@ -102,11 +119,26 @@ do
 
   compose_networks="${compose_networks}  ${SITE_NAME}_internal:
 "
+  compose_phpmyadmin_service_incude="${compose_phpmyadmin_service_incude},${SITE_NAME}_mariadb"
+  compose_phpmyadmin_network="${compose_phpmyadmin_network}      - ${SITE_NAME}_internal
+"
 
   compose_proxy_service="${compose_proxy_service}      - ${SITE_NAME}_wordpress
 "
+
+  compose_phpmyadmin_service_end1="${compose_phpmyadmin_service_end1}      - ${SITE_NAME}_mariadb
+"
+
 done
 
-docker_compose="${compose_header}${compose_services}${compose_proxy_service}${compose_volumes}${compose_networks}"
+compose_phpmyadmin_service_end2="    ports:
+      - ${PHPMYADMIN_PORT}:80
+    networks:
+      - shared
+${compose_phpmyadmin_network}
+"
 
-echo "$docker_compose" > docker-compose.yml
+compose_phpmyadmin_service_done="${compose_phpmyadmin_service_start}$(echo "$compose_phpmyadmin_service_incude" | sed 's/,//')${compose_phpmyadmin_service_end1}${compose_phpmyadmin_service_end2}"
+docker_compose="${compose_header}${compose_services}${compose_phpmyadmin_service_done}${compose_proxy_service}${compose_volumes}${compose_networks}"
+
+echo "$docker_compose" >docker-compose.yml
