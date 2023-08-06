@@ -98,13 +98,21 @@ for i in "${!SITE_NAMES[@]}"; do
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
     restart: always
-    image: delfer/alpine-ftp-server:latest
+    image: stilliard/pure-ftpd:latest
     volumes:
-      - ${SITE_NAME}_wordpress:/bitnami/wordpress/wp-content
+      - ${SITE_NAME}_wordpress:/bitnami/wordpress
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content\"
+      PUBLICHOST: 127.0.0.1
+      # USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content\"
+      USERS: \"HT_PASSWD_USER:$HT_PASSWD_PASSWORD:1001:1001::/bitnami/wordpress\"
+      # FTP_USER_NAME: ${HT_PASSWD_USER}
+      # FTP_USER_PASS: ${HT_PASSWD_PASSWORD}
+      # FTP_USER_HOME: "/bitnami/wordpress"
+      PASSIVE_PORTS: \"$MIX_PORT-$MAX_PORT\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
+    expose:
+      - $MIX_PORT-$MAX_PORT
     ports:
       - ${FTP_PORT}:21
       - ${MIX_PORT}-${MAX_PORT}:${MIX_PORT}-${MAX_PORT}
