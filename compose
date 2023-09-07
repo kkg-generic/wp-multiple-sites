@@ -97,12 +97,14 @@ for i in "${!SITE_NAMES[@]}"; do
       - ${SITE_NAME}_internal
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
+    depends_on:
+      - ${SITE_NAME}_wordpress
     restart: always
     image: delfer/alpine-ftp-server:latest
     volumes:
       - ${SITE_NAME}_wordpress:/bitnami/wordpress/wp-content
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content|1001\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     ports:
@@ -141,4 +143,4 @@ ${compose_phpmyadmin_network}
 compose_phpmyadmin_service_done="${compose_phpmyadmin_service_start}$(echo "$compose_phpmyadmin_service_incude" | sed 's/,//')${compose_phpmyadmin_service_end1}${compose_phpmyadmin_service_end2}"
 docker_compose="${compose_header}${compose_services}${compose_phpmyadmin_service_done}${compose_proxy_service}${compose_volumes}${compose_networks}"
 
-echo "$docker_compose" >docker-compose.yml
+echo "$docker_compose" > docker-compose.yml
