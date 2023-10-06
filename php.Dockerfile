@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-USER 1001
+USER www-data
 
 WORKDIR /var/www/html/
 # ADD . /var/www/html
