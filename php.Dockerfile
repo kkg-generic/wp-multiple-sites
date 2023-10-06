@@ -1,8 +1,6 @@
 FROM php:7.4-fpm
 
-USER 1001
-
-WORKDIR /var/www/html/
+USER 0
 
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
@@ -18,6 +16,11 @@ RUN apt-get update && apt-get install -y \
     pdo_mysql \
     zip
 
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+USER 1001
+
+WORKDIR /var/www/html/
 # ADD . /var/www/html
 # RUN groupadd -g 1000 www-data
 # RUN usermod www-data -a -G www-data
@@ -26,7 +29,6 @@ RUN set -x \
     && mkdir -p /var/www/html \
     && chown -R www-data:www-data /var/www/html
 RUN chmod -R 755 /var/www/html
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
