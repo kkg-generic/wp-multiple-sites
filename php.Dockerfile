@@ -11,9 +11,11 @@ RUN set -ex; \
     libpng-dev \
     libzip-dev \
     zlib1g-dev \
-    libicu-dev \
+    && apt-get install -y libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg intl \
-    && docker-php-ext-install -j "$(nproc)" gd exif intl \
+    && docker-php-ext-install -j "$(nproc)" gd exif \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
     mysqli \
