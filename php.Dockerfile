@@ -12,7 +12,9 @@ RUN set -ex; \
     libzip-dev \
     zlib1g-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j "$(nproc)" gd exif imagick intl \
+    && docker-php-ext-install -j "$(nproc)" gd exif intl \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
     mysqli \
     pdo \
     pdo_mysql \
