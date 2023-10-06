@@ -15,18 +15,20 @@ RUN set -ex; \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j "$(nproc)" gd exif \
     mysqli \
     pdo \
     pdo_mysql \
-    zip
-    # build-essential
-    # libmagickwand-dev \
-    # && apt-get clean all
+    zip \
+    && apt install -y libmagickwand-dev --no-install-recommends \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # RUN pecl install imagick \
 #     && docker-php-ext-enable imagick
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG UNAME=www-data
