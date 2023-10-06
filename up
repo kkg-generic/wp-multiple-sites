@@ -11,6 +11,15 @@ for i in "${!SITE_NAMES[@]}"
 do
   mkdir -p $(pwd)/${SITE_NAMES}
   cp -r $(pwd)/wordpress/* $(pwd)/${SITE_NAMES} || true
+  chmod -R 755 $(pwd)/${SITE_NAMES} || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-admin || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-includes || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-content || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-content/themes || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-content/plugins || true
+  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
+  chmod -R 644 $(pwd)/${SITE_NAMES}/.htaccess || true
+  chmod -R 644 $(pwd)/${SITE_NAMES}/index.php || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
   docker volume create ${SITE_NAME}_mariadb || true

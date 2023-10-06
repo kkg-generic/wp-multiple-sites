@@ -29,6 +29,9 @@ do
   server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
+    # this comment is for testing local and comment out the next line
+    # listen 80;
+    # listen [::]:80;
     server_name ${DOMAIN_NAME} www.${DOMAIN_NAME};
     server_tokens off;
 
