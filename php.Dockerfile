@@ -18,8 +18,8 @@ RUN set -ex; \
     mysqli \
     pdo \
     pdo_mysql \
-    zip \
-    build-essential
+    zip
+    # build-essential
     # libmagickwand-dev \
     # && apt-get clean all
 
