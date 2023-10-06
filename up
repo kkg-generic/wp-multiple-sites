@@ -21,6 +21,7 @@ do
   chmod -R 755 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
   chmod -R 644 $(pwd)/${SITE_NAMES}/.htaccess || true
   chmod -R 644 $(pwd)/${SITE_NAMES}/index.php || true
+  # chmod -R 644 $(pwd)/${SITE_NAMES}/wp-config.php || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
   docker volume create ${SITE_NAME}_mariadb || true
