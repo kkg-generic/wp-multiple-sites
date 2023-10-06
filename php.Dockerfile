@@ -20,10 +20,15 @@ RUN set -ex; \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN set -x \
-    && set -e \
-    && mkdir -p /var/www/html/ \
-    && chown -R root:www-data /var/www/
+ARG UNAME=www-data
+ARG UGROUP=www-data
+ARG UID=1000
+ARG GID=1000
+RUN usermod -u $UID $UNAME && groupmod -g $GID $UGROUP
+# RUN set -x \
+#     && set -e \
+#     && mkdir -p /var/www/html/ \
+#     && chown -R root:www-data /var/www/
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

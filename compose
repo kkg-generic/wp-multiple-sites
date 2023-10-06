@@ -107,7 +107,7 @@ for i in "${!SITE_NAMES[@]}"; do
     volumes:
       - ./${SITE_NAME}:/var/www/html
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html|1001\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html|1000\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     expose:
