@@ -16,12 +16,17 @@ RUN set -ex; \
     && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j "$(nproc)" gd exif \
+    build-essential \
     && apt-get install -y libmagickwand-dev \
-    && pecl install imagick \
     mysqli \
     pdo \
     pdo_mysql \
     zip
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
