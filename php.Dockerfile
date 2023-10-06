@@ -23,6 +23,7 @@ RUN set -x \
     && set -e \
     && mkdir -p /var/www/html \
     && chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
