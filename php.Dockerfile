@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     pdo_mysql \
     zip
 
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # ADD . /var/www/html
 # RUN groupadd -g 1000 www-data
 # RUN usermod www-data -a -G www-data
@@ -23,7 +24,8 @@ RUN set -x \
     && chown -R www-data:www-data /var/www/html/
 USER www-data
 WORKDIR /var/www/html/
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
