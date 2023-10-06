@@ -1,0 +1,116 @@
+version: "2"
+services:
+  test_mariadb:
+    restart: always
+    container_name: test_mariadb
+    image: docker.io/bitnami/mariadb:10.6
+    volumes:
+      - test_mariadb:/bitnami/mariadb
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MARIADB_USER=bn_wordpress
+      - MARIADB_PASSWORD=1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
+      - MARIADB_DATABASE=bitnami_wordpress
+    networks:
+      test_internal:
+        aliases:
+          - mariadb
+  test_nginx:
+    container_name: test_nginx
+    image: nginx:latest
+    volumes:
+      - ./test:/var/www/html
+      - ./nginx/server-block.conf:/etc/nginx/conf/server_blocks/_server-block.conf
+      - ./nginx/application-block-basic-auth.conf:/etc/nginx/conf/_app.conf
+      - ./nginx/test.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - test_php
+    restart: always
+    networks:
+      - shared
+      - test_internal
+  test_php:
+    build:
+      context: .
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./test:/var/www/html
+      - .htpasswd:/var/www/html/.htpasswd
+      - ./php:/usr/local/etc/php/conf.d
+      - ./php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    restart: always
+    depends_on:
+      - test_mariadb
+    networks:
+      - shared
+      - test_internal
+  test_ftp:
+    container_name: test_ftp
+    restart: always
+    image: stilliard/pure-ftpd:latest
+    volumes:
+      - ./test:/var/www/html
+    environment:
+      PUBLICHOST: 127.0.0.1
+      # USERS: "bob|67te2KTJELKZqtKZ|/bitnami/wordpress/wp-content"
+      USERS: "HT_PASSWD_USER:67te2KTJELKZqtKZ:1001:1001::/bitnami/wordpress"
+      # FTP_USER_NAME: bob
+      # FTP_USER_PASS: 67te2KTJELKZqtKZ
+      # FTP_USER_HOME: /bitnami/wordpress
+      PASSIVE_PORTS: "3021-3031"
+      MIN_PORT: 3021
+      MAX_PORT: 3031
+    expose:
+      - 3021-3031
+    ports:
+      - 2021:21
+      - 3021-3031:3021-3031
+  phpmyadmin:
+    restart: always
+    image: phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOSTS: test_mariadb
+      # PMA_ARBITRARY: 1
+      # PMA_PORT: 3306
+      # PMA_USER: bn_wordpress
+      # PMA_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
+      # PMA_CONTROLUSER:
+      # PMA_CONTROLUSER_PASSWORD:
+      # APACHE_PORT: 27019
+    depends_on:
+      - test_mariadb
+    ports:
+      - 27019:80
+    networks:
+      - shared
+      - test_internal
+
+  proxy:
+    container_name: proxy_server
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    networks:
+      - shared
+    depends_on:
+      - test_nginx
+volumes:
+  test_mariadb:
+    name: test_mariadb
+    external: true
+  test_nginx:
+    name: test_nginx
+    external: true
+  test_php:
+    name: test_nginx
+    external: true
+networks:
+  shared:
+    name: shared
+    external: true
+  test_internal:

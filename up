@@ -9,11 +9,14 @@ docker network create --attachable shared || true
 echo "...create volume"
 for i in "${!SITE_NAMES[@]}"
 do
+  mkdir -p $(pwd)/${SITE_NAMES}
+  cp -r $(pwd)/wordpress/* $(pwd)/${SITE_NAMES} || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
   docker volume create ${SITE_NAME}_mariadb || true
 done
 
+source $(pwd)/site
 source $(pwd)/htpasswd
 source $(pwd)/compose
 source $(pwd)/proxy

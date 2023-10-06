@@ -69,42 +69,45 @@ for i in "${!SITE_NAMES[@]}"; do
       ${SITE_NAME}_internal:
         aliases:
           - mariadb
-  ${SITE_NAME}_wordpress:
-    container_name: ${SITE_NAME}_wordpress
-    restart: always
-    image: wordpress-nginx:latest
-    build: .
+  ${SITE_NAME}_nginx:
+    container_name: ${SITE_NAME}_nginx
+    image: nginx:latest
     volumes:
-      - ${SITE_NAME}_wordpress:/bitnami/wordpress
-      - ./nginx/server-block.conf:/opt/bitnami/nginx/conf/server_blocks/_server-block.conf
-      # - ./nginx/application-block-normal.conf:/opt/bitnami/nginx/conf/bitnami/_app.conf
-      - ./nginx/application-block-basic-auth.conf:/opt/bitnami/nginx/conf/bitnami/_app.conf
-      - .htpasswd:/opt/bitnami/.htpasswd
+      - ./${SITE_NAME}:/var/www/html
+      - ./nginx/server-block.conf:/etc/nginx/conf/server_blocks/_server-block.conf
+      - ./nginx/application-block-basic-auth.conf:/etc/nginx/conf/_app.conf
+      - ./nginx/${SITE_NAME}.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - ${SITE_NAME}_php
+    restart: always
+    networks:
+      - shared
+      - ${SITE_NAME}_internal
+  ${SITE_NAME}_php:
+    build:
+      context: .
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./${SITE_NAME}:/var/www/html
+      - .htpasswd:/var/www/html/.htpasswd
+      - ./php:/usr/local/etc/php/conf.d
+      - ./php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    restart: always
     depends_on:
       - ${SITE_NAME}_mariadb
-    environment:
-      PHP_MEMORY_LIMIT: 512m
-      PHP_MAX_EXECUTION_TIME: 3600
-      PHP_POST_MAX_SIZE: 1G
-      PHP_UPLOAD_MAX_FILESIZE: 1G
-      # WORDPRESS_DATABASE_HOST: ${SITE_NAME}_mariadb
-      # WORDPRESS_DATABASE_PORT_NUMBER: 3306
-      WORDPRESS_DATABASE_USER: bn_wordpress
-      WORDPRESS_DATABASE_PASSWORD: 1RNMfMt9gpKZrP2QGaOicb8QYoGbmbS9wE05SDTzzOY=
-      WORDPRESS_DATABASE_NAME: bitnami_wordpress
     networks:
       - shared
       - ${SITE_NAME}_internal
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
     depends_on:
-      - ${SITE_NAME}_wordpress
+      - ${SITE_NAME}_php
     restart: always
     image: delfer/alpine-ftp-server:latest
     volumes:
-      - ${SITE_NAME}_wordpress:/bitnami/wordpress/wp-content
+      - ./${SITE_NAME}:/var/www/html
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/bitnami/wordpress/wp-content|1001\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html|1001\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     expose:
@@ -116,8 +119,11 @@ for i in "${!SITE_NAMES[@]}"; do
   compose_volumes="${compose_volumes}  ${SITE_NAME}_mariadb:
     name: ${SITE_NAME}_mariadb
     external: true
-  ${SITE_NAME}_wordpress:
-    name: ${SITE_NAME}_wordpress
+  ${SITE_NAME}_nginx:
+    name: ${SITE_NAME}_nginx
+    external: true
+  ${SITE_NAME}_php:
+    name: ${SITE_NAME}_php
     external: true
 "
 
@@ -127,7 +133,10 @@ for i in "${!SITE_NAMES[@]}"; do
   compose_phpmyadmin_network="${compose_phpmyadmin_network}      - ${SITE_NAME}_internal
 "
 
-  compose_proxy_service="${compose_proxy_service}      - ${SITE_NAME}_wordpress
+  compose_proxy_service="${compose_proxy_service}      - ${SITE_NAME}_nginx
+"
+
+  compose_php_service="${compose_php_service}      - ${SITE_NAME}_php
 "
 
   compose_phpmyadmin_service_end1="${compose_phpmyadmin_service_end1}      - ${SITE_NAME}_mariadb
@@ -145,4 +154,4 @@ ${compose_phpmyadmin_network}
 compose_phpmyadmin_service_done="${compose_phpmyadmin_service_start}$(echo "$compose_phpmyadmin_service_incude" | sed 's/,//')${compose_phpmyadmin_service_end1}${compose_phpmyadmin_service_end2}"
 docker_compose="${compose_header}${compose_services}${compose_phpmyadmin_service_done}${compose_proxy_service}${compose_volumes}${compose_networks}"
 
-echo "$docker_compose" > docker-compose.yml
+echo "$docker_compose" >docker-compose.yml

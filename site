@@ -1,0 +1,67 @@
+#!/bin/bash
+
+source $(pwd)/config
+
+echo "...prepare site.conf"
+site_conf_header="events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    client_max_body_size 128M;
+
+    # access_log /var/log/nginx/access.log main;
+    sendfile on;
+    #tcp_nopush on;
+    keepalive_timeout 120;
+    gzip on;
+    gzip_comp_level 2;
+    gzip_http_version 1.0;
+    gzip_proxied any;
+    gzip_min_length 1100;
+    gzip_buffers 16 8k;
+    gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+    gzip_vary on;
+
+    server {
+        listen 8080;
+        server_name ${SITE_NAMES}_php;
+        client_max_body_size 128M;
+        root /var/www/html/;
+
+        location / {
+            # try_files \$uri \$uri/ /index.php?\$args;
+            try_files \$uri \$uri.html \$uri/ @extensionless-php;
+            index index.html index.htm index.php;
+        }
+
+        location ~ \.php$ {
+            try_files \$uri =404;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_buffers 8 16k;
+            fastcgi_buffer_size 32k;
+            fastcgi_connect_timeout 300;
+            fastcgi_send_timeout 300;
+            fastcgi_read_timeout 300;
+            fastcgi_pass ${SITE_NAMES}_php:9000;
+            fastcgi_index index.php;
+            include fastcgi_params;
+            fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+            fastcgi_param PATH_INFO \$fastcgi_path_info;
+        }
+
+        location @extensionless-php {
+            rewrite ^(.*)$ \$1.php last;
+        }
+    }
+"
+
+site_conf_footer="
+}"
+
+site_conf="${site_conf_header}${site_conf_footer}"
+
+echo "$site_conf" >$(pwd)/nginx/${SITE_NAMES}.conf
