@@ -38,7 +38,7 @@ do
     location / {
       access_log off;
       log_not_found off;
-      proxy_pass http://${SITE_NAME}_wordpress:8080;
+      proxy_pass http://${SITE_NAME}_nginx:8080;
       proxy_set_header Host \$http_host;
       proxy_set_header X-Forwarded-Host \$http_host;
       proxy_set_header X-Real-IP \$remote_addr;
