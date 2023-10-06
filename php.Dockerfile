@@ -1,6 +1,9 @@
 FROM php:7.4-fpm
 
-RUN apt-get update && apt-get install -y \
+WORKDIR /var/www/html/
+
+RUN set -ex \
+    apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
@@ -16,19 +19,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN whoami
-RUN groups
 
-USER www-data
-
-WORKDIR /var/www/html/
 # ADD . /var/www/html
 # RUN groupadd -g 1000 www-data
 # RUN usermod www-data -a -G www-data
-RUN set -x \
-    && set -e \
-    && mkdir -p /var/www/html \
-    && chown www-data:www-data /var/www/html
+RUN mkdir /var/www/html \
+    && chown a+rwx -R /var/www/html
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
