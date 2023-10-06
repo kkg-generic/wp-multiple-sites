@@ -2,7 +2,8 @@ FROM php:7.4-fpm
 
 WORKDIR /var/www/html/
 
-RUN set -ex \
+RUN set -ex; \
+    \
     apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
