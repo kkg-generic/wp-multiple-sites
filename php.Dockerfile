@@ -11,7 +11,8 @@ RUN set -ex; \
     libpng-dev \
     libzip-dev \
     zlib1g-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    libicu-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg intl \
     && docker-php-ext-install -j "$(nproc)" gd exif intl \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
