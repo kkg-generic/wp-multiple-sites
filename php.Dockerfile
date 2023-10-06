@@ -1,5 +1,8 @@
 FROM php:7.4-fpm
 
+RUN set -ex; \
+    usermod -u 1000 www-data;
+
 WORKDIR /var/www/html/
 
 RUN set -ex; \
@@ -20,10 +23,6 @@ RUN set -ex; \
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-
-# ADD . /var/www/html
-# RUN groupadd -g 1000 www-data
-# RUN usermod www-data -a -G www-data
 RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
