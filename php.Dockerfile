@@ -18,7 +18,6 @@ RUN set -ex; \
     && docker-php-ext-install -j "$(nproc)" gd exif \
     && apt-get install -y libmagickwand-dev \
     && pecl install imagick \
-    && docker-php-ext-enable imagick \
     mysqli \
     pdo \
     pdo_mysql \
