@@ -11,8 +11,6 @@ RUN set -ex; \
     libpng-dev \
     libzip-dev \
     zlib1g-dev \
-    && apt-get install -y libmagickwand-dev --no-install-recommends \
-    && pecl install imagick \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
@@ -20,13 +18,15 @@ RUN set -ex; \
     mysqli \
     pdo \
     pdo_mysql \
-    zip
+    zip \
+    build-essential \
+    libmagickwand-dev \
+    && apt-get clean all
+
+RUN pecl install imagick \
+    && docker-php-ext-enable imagick
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# RUN pecl install imagick \
-#     && docker-php-ext-enable imagick
-
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG UNAME=www-data
