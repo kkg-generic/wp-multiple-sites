@@ -20,11 +20,11 @@ RUN set -ex; \
     pdo_mysql \
     zip \
     build-essential \
-    libmagickwand-dev \
-    && apt-get clean all
+    # libmagickwand-dev \
+    # && apt-get clean all
 
-RUN pecl install imagick \
-    && docker-php-ext-enable imagick
+# RUN pecl install imagick \
+#     && docker-php-ext-enable imagick
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
