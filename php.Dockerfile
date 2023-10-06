@@ -27,8 +27,8 @@ WORKDIR /var/www/html/
 RUN set -x \
     && set -e \
     && mkdir -p /var/www/html \
-    && chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+    && chown www-data:www-data /var/www/html
+RUN chmod 755 /var/www/html
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
