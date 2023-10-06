@@ -1,8 +1,5 @@
 FROM php:7.4-fpm
 
-RUN set -ex; \
-    usermod -u 1000 www-data;
-
 WORKDIR /var/www/html/
 
 RUN set -ex; \
