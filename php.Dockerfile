@@ -25,7 +25,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # RUN groupadd -g 1000 www-data
 # RUN usermod www-data -a -G www-data
 RUN mkdir /var/www/html \
-    && chown a+rwx -R /var/www/html
+    chown a+rwx -R /var/www/html
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
