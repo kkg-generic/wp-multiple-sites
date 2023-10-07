@@ -98,6 +98,13 @@ for i in "${!SITE_NAMES[@]}"; do
     networks:
       - shared
       - ${SITE_NAME}_internal
+  ${SITE_NAME}_redis:
+    container_name: ${SITE_NAME}_redis
+    image: redis:latest
+    restart: always
+    networks:
+      - shared
+      - ${SITE_NAME}_internal
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
     depends_on:
@@ -107,7 +114,7 @@ for i in "${!SITE_NAMES[@]}"; do
     volumes:
       - ./${SITE_NAME}:/var/www/html
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html|1000\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     expose:
