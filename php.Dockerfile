@@ -17,8 +17,9 @@ RUN set -ex; \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j "$(nproc)" gd exif opcache \
+    && docker-php-ext-install -j "$(nproc)" gd exif \
     && docker-php-ext-install mbstring pdo pdo_mysql \
+    && docker-php-ext-install opcache \
     mysqli \
     pdo \
     pdo_mysql \
