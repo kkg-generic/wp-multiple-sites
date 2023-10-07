@@ -31,15 +31,15 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ARG UNAME=www-data
-# ARG UGROUP=www-data
-# ARG UID=1000
-# ARG GID=1000
-# RUN usermod -u $UID $UNAME && groupmod -g $GID $UGROUP
-RUN set -x \
-    && set -e \
-    && mkdir -p /var/www/html/ \
-    && chown -R www-data /var/www/html/
+ARG UNAME=www-data
+ARG UGROUP=www-data
+ARG UID=1000
+ARG GID=998
+RUN usermod -u $UID $UNAME && groupmod -g $GID $UGROUP
+# RUN set -x \
+#     && set -e \
+#     && mkdir -p /var/www/html/ \
+#     && chown -R www-data /var/www/html/
 
 # COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
