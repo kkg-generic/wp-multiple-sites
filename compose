@@ -103,9 +103,9 @@ for i in "${!SITE_NAMES[@]}"; do
     image: redis:latest
     restart: always
     networks:
-      - ${SITE_NAME}_internal:
-          aliases:
-            - redis
+      ${SITE_NAME}_internal:
+        aliases:
+          - redis
   ${SITE_NAME}_ftp:
     container_name: ${SITE_NAME}_ftp
     depends_on:
