@@ -12,15 +12,15 @@ do
   mkdir -p $(pwd)/${SITE_NAMES}
   cp -r $(pwd)/wordpress/* $(pwd)/${SITE_NAMES} || true
   sudo chown -R root:root $(pwd)/${SITE_NAMES} || true
-  chmod -R 755 $(pwd)/${SITE_NAMES} || true
-  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-admin || true
-  chmod -R 755 $(pwd)/${SITE_NAMES}/wp-includes || true
-  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content || true
-  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content/themes || true
-  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content/plugins || true
-  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
-  chmod -R 644 $(pwd)/${SITE_NAMES}/.htaccess || true
-  chmod -R 644 $(pwd)/${SITE_NAMES}/index.php || true
+  chmod 755 $(pwd)/${SITE_NAMES} || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-admin || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-includes || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-content || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-content/themes || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-content/plugins || true
+  chmod 755 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
+  chmod 644 $(pwd)/${SITE_NAMES}/.htaccess || true
+  chmod 644 $(pwd)/${SITE_NAMES}/index.php || true
   # chmod -R 644 $(pwd)/${SITE_NAMES}/wp-config.php || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
