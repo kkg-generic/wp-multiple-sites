@@ -15,7 +15,7 @@ do
   chmod -R 777 $(pwd)/${SITE_NAMES} || true
   chmod -R 777 $(pwd)/${SITE_NAMES}/wp-admin || true
   chmod -R 777 $(pwd)/${SITE_NAMES}/wp-includes || true
-  chmod -R 776 $(pwd)/${SITE_NAMES}/wp-content || true
+  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/themes || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/plugins || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
