@@ -22,6 +22,7 @@ RUN set -ex; \
     pdo_mysql \
     zip \
     && apt install -y libmagickwand-dev --no-install-recommends \
+    && pecl install redis \
     && pecl install imagick \
     && docker-php-ext-enable imagick
 
