@@ -4,7 +4,8 @@ WORKDIR /var/www/html/
 
 RUN set -ex; \
     \
-    apt-get update && apt-get install -y \
+    apt-get update && apt-get install -y --no-install-recommends \
+    ghostscript \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
