@@ -5,6 +5,7 @@ WORKDIR /var/www/html/
 RUN set -ex; \
     \
     apt-get update && apt-get install -y --no-install-recommends \
+    && apk add oniguruma-dev \
     ghostscript \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -12,7 +13,6 @@ RUN set -ex; \
     libpng-dev \
     libzip-dev \
     zlib1g-dev \
-    oniguruma \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
