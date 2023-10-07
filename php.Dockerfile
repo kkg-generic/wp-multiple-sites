@@ -21,6 +21,7 @@ RUN set -ex; \
     pdo \
     pdo_mysql \
     zip \
+    mbstring \
     && apt install -y libmagickwand-dev --no-install-recommends \
     && pecl install redis \
     && pecl install imagick \
