@@ -14,7 +14,7 @@ do
   cd $(pwd)/${SITE_NAMES}
   chown -R root:root . || true
   find . -type d -exec chmod 775 {} \; || true
-  find . -type f -exec chmod 664 {} \; || true
+  find . -type f -exec chmod 755 {} \; || true
   # sudo chown -R root:root $(pwd)/${SITE_NAMES} || true
   # sudo chmod 777 root:root $(pwd)/${SITE_NAMES} || true
   # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-admin || true
