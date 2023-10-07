@@ -5,7 +5,7 @@ WORKDIR /var/www/html/
 RUN set -ex; \
     \
     apt-get update && apt-get install -y --no-install-recommends \
-    && apk add oniguruma-dev \
+    libonig-dev \
     ghostscript \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
