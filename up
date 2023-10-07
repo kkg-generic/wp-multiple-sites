@@ -19,10 +19,10 @@ do
   # sudo chmod 777 root:root $(pwd)/${SITE_NAMES} || true
   # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-admin || true
   # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-includes || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/themes || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/plugins || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/uploads || true
+  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content || true
+  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/themes || true
+  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/plugins || true
+  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/uploads || true
   # sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/.htaccess || true
   # sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/index.php || true
   # chmod -R 644 $(pwd)/${SITE_NAMES}/wp-config.php || true
