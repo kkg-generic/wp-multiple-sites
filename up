@@ -11,7 +11,7 @@ for i in "${!SITE_NAMES[@]}"
 do
   mkdir -p $(pwd)/${SITE_NAMES}
   cp -r $(pwd)/wordpress/* $(pwd)/${SITE_NAMES} || true
-  chown -R root:root $(pwd)/${SITE_NAMES} || true
+  sudo chown -R root:root $(pwd)/${SITE_NAMES} || true
   sudo chmod 777 root:root $(pwd)/${SITE_NAMES} || true
   sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-admin || true
   sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-includes || true
