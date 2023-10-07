@@ -13,6 +13,7 @@ RUN set -ex; \
     libpng-dev \
     libzip-dev \
     zlib1g-dev \
+    libpcre3-dev \
     && apt-get install -y libicu-dev \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl \
