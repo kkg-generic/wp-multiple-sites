@@ -15,12 +15,12 @@ do
   chmod -R 777 $(pwd)/${SITE_NAMES} || true
   chmod -R 777 $(pwd)/${SITE_NAMES}/wp-admin || true
   chmod -R 777 $(pwd)/${SITE_NAMES}/wp-includes || true
-  chmod -R 777 $(pwd)/${SITE_NAMES}/wp-content || true
+  chmod -R 776 $(pwd)/${SITE_NAMES}/wp-content || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/themes || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/plugins || true
   # chmod 777 $(pwd)/${SITE_NAMES}/wp-content/uploads || true
   chmod 644 $(pwd)/${SITE_NAMES}/.htaccess || true
-  chmod 644 $(pwd)/${SITE_NAMES}/index.php || true
+  # chmod 644 $(pwd)/${SITE_NAMES}/index.php || true
   # chmod -R 644 $(pwd)/${SITE_NAMES}/wp-config.php || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
