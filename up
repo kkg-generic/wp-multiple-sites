@@ -11,20 +11,16 @@ for i in "${!SITE_NAMES[@]}"
 do
   mkdir -p $(pwd)/${SITE_NAMES}
   cp -r $(pwd)/wordpress/* $(pwd)/${SITE_NAMES} || true
-  cd $(pwd)/${SITE_NAMES}
-  chown -R root:root . || true
-  find . -type d -exec chmod 775 {} \; || true
-  find . -type f -exec chmod 755 {} \; || true
   # sudo chown -R root:root $(pwd)/${SITE_NAMES} || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES} || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-admin || true
-  # sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-includes || true
-  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content || true
-  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/themes || true
-  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/plugins || true
-  chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/uploads || true
-  # sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/.htaccess || true
-  # sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/index.php || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES} || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-admin || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-includes || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/themes || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/plugins || true
+  sudo chmod 777 root:root $(pwd)/${SITE_NAMES}/wp-content/uploads || true
+  sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/.htaccess || true
+  sudo chmod 644 root:root $(pwd)/${SITE_NAMES}/index.php || true
   # chmod -R 644 $(pwd)/${SITE_NAMES}/wp-config.php || true
   SITE_NAME=${SITE_NAMES[$i]}
   docker volume create ${SITE_NAME}_wordpress || true
