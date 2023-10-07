@@ -114,7 +114,7 @@ for i in "${!SITE_NAMES[@]}"; do
     volumes:
       - ./${SITE_NAME}:/var/www/html
     environment:
-      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html\"
+      USERS: \"$HT_PASSWD_USER|$HT_PASSWD_PASSWORD|/var/www/html/\"
       MIN_PORT: $MIX_PORT
       MAX_PORT: $MAX_PORT
     expose:
@@ -128,6 +128,9 @@ for i in "${!SITE_NAMES[@]}"; do
     external: true
   ${SITE_NAME}_nginx:
     name: ${SITE_NAME}_nginx
+    external: true
+  ${SITE_NAME}_redis:
+    name: ${SITE_NAME}_redis
     external: true
   ${SITE_NAME}_php:
     name: ${SITE_NAME}_php
